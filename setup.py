@@ -12,7 +12,7 @@ setuptools.setup(
     description='Content extractor for files containing text',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url='https://github.com/mike-huls/toolbox',
+    url='https://gitlab.com/qarik/data-science/gcp_docunderstanding_spike/-/tree/content_extractor',
     packages=['content_extractor'],
     install_requires=REQUIREMENTS,
 )

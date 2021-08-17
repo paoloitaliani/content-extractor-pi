@@ -10,7 +10,8 @@ import re
 
 class ContentExtractor:
 
-    def __init__(self):
+    def __init__(self, w2v_model):
+        self.w2v_model = w2v_model
         self.train_paragraph_df = None
         self.target_text_df = None
         self.model_pred = None
@@ -19,10 +20,13 @@ class ContentExtractor:
         self.n_label_1 = None
         self.pca = None
 
-    def train_model(self, train_text_df, w2v_model, use_pca=False, gamma=0.1, C=1):
+    def train_model(self, train_df, train_additional_features=None, y_name="label", text_name="text", use_pca=False, gamma=0.1, C=1):
 
-        self.train_paragraph_df = build_features_df(train_text_df, w2v_model)
-        self.n_label_1 = train_text_df[train_text_df["label"] == 1].shape[0]
+        self.train_paragraph_df = build_features_df(train_df, self.w2v_model, text_name=text_name)
+        if train_additional_features is not None:
+            self.train_paragraph_df = pd.concat([self.train_paragraph_df, train_additional_features], axis=1)
+
+        self.n_label_1 = train_df[train_df[y_name] == 1].shape[0]
 
         x = self.train_paragraph_df.iloc[:, 2:]
         self.data_min = x.min()
@@ -35,16 +39,18 @@ class ContentExtractor:
             df_scaled = pca.fit_transform(df_scaled)
 
         model_pred = svm.SVC(kernel="rbf", gamma=gamma, C=C)
-        x_resampled, y_resampled = SVMSMOTE().fit_resample(df_scaled, self.train_paragraph_df["label"])
+        x_resampled, y_resampled = SVMSMOTE().fit_resample(df_scaled, self.train_paragraph_df[y_name])
         model_pred.fit(x_resampled, y_resampled)
         self.model_pred = model_pred
 
         if use_pca:
             self.pca = pca
 
-    def extract_content(self, target_text_df, w2v_model):
+    def extract_content(self, target_df, target_additional_features=None, text_name="text"):
 
-        self.target_text_df = build_features_df(target_text_df, w2v_model)
+        self.target_text_df = build_features_df(target_df, self.w2v_model, text_name=text_name)
+        if target_additional_features is not None:
+            self.target_text_df = pd.concat([self.target_text_df, target_additional_features], axis=1)
 
         self.target_text_df.fillna(0, inplace=True)
         x = self.target_text_df.iloc[:, 1:]
@@ -57,16 +63,16 @@ class ContentExtractor:
 
         print("Predicting content")
         self.target_text_df["predicted_label"] = self.model_pred.predict(df_scaled)
-        wanted_content = self.target_text_df[self.target_text_df["predicted_label"] == 1]["text"].tolist()
+        wanted_content = self.target_text_df[self.target_text_df["predicted_label"] == 1][text_name].tolist()
 
         return wanted_content
 
 
-def build_features_df(text_df, w2v_model):
+def build_features_df(text_df, w2v_model, text_name="text"):
 
     dict_list = []
     print("Extracting Sherlock Features")
-    for par in tqdm(text_df["text"]):
+    for par in tqdm(text_df[text_name]):
 
         features_dict = {}
 
@@ -123,7 +129,7 @@ def build_features_df(text_df, w2v_model):
 
     print("Extracting Word Embedding Features")
     row_list = []
-    for obj in tqdm(text_df["text"]):
+    for obj in tqdm(text_df[text_name]):
         try:
             words = [w for w in obj.lower().split() if w in w2v_model]
             input_vector = np.mean(w2v_model[words], axis=0)
