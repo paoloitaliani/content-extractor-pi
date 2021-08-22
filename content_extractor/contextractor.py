@@ -22,11 +22,10 @@ class ContentExtractor:
 
     def train_model(self, train_df, train_additional_features=None, y_name="label", text_name="text", use_pca=False, gamma=0.1, C=1):
 
+        self.n_label_1 = train_df[train_df[y_name] == 1].shape[0]
         self.train_paragraph_df = build_features_df(train_df, self.w2v_model, text_name=text_name)
         if train_additional_features is not None:
             self.train_paragraph_df = pd.concat([self.train_paragraph_df, train_additional_features], axis=1)
-
-        self.n_label_1 = train_df[train_df[y_name] == 1].shape[0]
 
         x = self.train_paragraph_df.iloc[:, 2:]
         self.data_min = x.min()
@@ -35,16 +34,13 @@ class ContentExtractor:
         df_scaled.fillna(0, inplace=True)
 
         if use_pca:
-            pca = PCA(.95)
-            df_scaled = pca.fit_transform(df_scaled)
+            self.pca = PCA(.95)
+            df_scaled = self.pca.fit_transform(df_scaled)
 
         model_pred = svm.SVC(kernel="rbf", gamma=gamma, C=C)
         x_resampled, y_resampled = SVMSMOTE().fit_resample(df_scaled, self.train_paragraph_df[y_name])
         model_pred.fit(x_resampled, y_resampled)
         self.model_pred = model_pred
-
-        if use_pca:
-            self.pca = pca
 
     def extract_content(self, target_df, target_additional_features=None, text_name="text"):
 
@@ -69,10 +65,11 @@ class ContentExtractor:
 
 
 def build_features_df(text_df, w2v_model, text_name="text"):
-
     dict_list = []
     print("Extracting Sherlock Features")
     for par in tqdm(text_df[text_name]):
+        if not isinstance(par, str):
+            par = str(par)
 
         features_dict = {}
 
