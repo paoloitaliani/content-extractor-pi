@@ -5,8 +5,9 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name='content_extractor',
-    version='0.0.3',
+    name='content_extractor-pi',
+    version='0.0.7',
+    license="MIT",
     author='Paolo Italiani',
     author_email='paoita@hotmail.it',
     description='Content extractor for files containing text',

@@ -2,11 +2,11 @@
 In order to implement the content_extractor you need to follow 3 steps:
 - Step 1: load a pre-trained word embedding
   model, I'm using the one available here https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit?usp=sharing
-- Step 2: define train_df and target_df. train_df is a pandas DataFrame containing the text examples in 1 one column
-  and the corresponding labels in the other one used for training the content_extractor model. target_df is a pandas
-  DataFrame containing all the text examples in the corpus of documents .
+- Step 2: define train_df and target_df. train_df is a pandas DataFrame containing the text examples in one column
+  and the corresponding labels in the other one. train_df it's used for training the content_extractor model. target_df
+  is a pandas DataFrame containing all the text examples that we have at disposal.
 - Step 3: We define the ContentExtractor object,
-  we train the model and extract just the desired examples that will be saved in the target examples object .
+  we train the model and extract just the desired examples that will be saved in the target examples object.
 """
 
 from content_extractor import contextractor as cte
