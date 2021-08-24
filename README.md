@@ -52,8 +52,11 @@ Example
 ------------
 In the following example we have a full implementation that leads to extracting the desired 
 content from a set of more than 62000 paragraphs originated from the World Bank Loan Agreements
-Corpus, using just 11 examples manually labeled as 1. The desired paragraphs are stored in the
-**target_examples** list.
+Corpus, using just 11 examples manually labeled as 1. We aim to extract the *objective paragraph*
+that is a short segment describing how the the loan it's going to be spent, below you can find an 
+example.
+
+The desired paragraphs are stored in the **target_examples** list.
 ```python
 from content_extractor import contextractor as cte
 from gensim.models import KeyedVectors
