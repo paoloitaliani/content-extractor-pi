@@ -56,6 +56,8 @@ Corpus, using just 11 examples manually labeled as 1. We aim to extract the *obj
 that is a short segment describing how the the loan it's going to be spent, below you can find an 
 example.
 
+<p align="center"><img src="https://github.com/paoloitaliani/content-extractor-pi/raw/master/images/image1.png" width=600></p>
+
 The desired paragraphs are stored in the **target_examples** list.
 ```python
 from content_extractor import contextractor as cte
