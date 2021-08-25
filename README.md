@@ -58,7 +58,8 @@ example.
 
 <p align="center"><img src="https://github.com/paoloitaliani/content-extractor-pi/raw/master/images/image1.png" width=600></p>
 
-The desired paragraphs are stored in the **target_examples** list.
+The desired paragraphs are stored in the **target_examples** list. You can find train_df.csv and 
+target_df.csv [here]()
 ```python
 from content_extractor import contextractor as cte
 from gensim.models import KeyedVectors

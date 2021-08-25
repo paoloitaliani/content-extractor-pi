@@ -1,6 +1,5 @@
 venv/
 .idea/
-data/
 __pycache__/
 dist/
 content_extractor_pi.egg-info/
